@@ -1,0 +1,28 @@
+version: '3.0'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+    - "80:8080"
+    volumes:
+    - django_static:/var/www/static
+    - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/default.conf:ro
+    deploy:
+      replicas: 1
+    depends_on:
+    - django
+
+  django:
+    image: harrysince1992/devops:django-img
+    ports:
+    - "8000:8000"
+    volumes:
+    - django_static:/code/staticfiles
+    command: gunicorn todo.wsgi --bind=0.0.0.0:8000
+    deploy:
+      replicas: 1
+
+
+volumes:
+  django_static:
