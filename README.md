@@ -13,6 +13,8 @@ This is a sample project that a novice django developer can use to get started.
 - Easily add, delete
 - Simple UI
 - Blazing fast
+- ELK stack deployed
+- Docker swarm cluster on backed to support HA
 
 ## Setup
 
