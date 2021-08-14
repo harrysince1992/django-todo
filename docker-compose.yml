@@ -75,7 +75,7 @@ services:
     - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     - /var/lib/docker:/var/lib/docker:ro
     - /var/run/docker.sock:/var/run/docker.sock
-    - /var/lib/docker/volumes/cotainer_logs:/usr/share/volumelogs:ro
+    - /var/lib/docker/volumes/webapp_cotainer_logs:/usr/share/volumelogs:ro
     deploy:
       replicas: 1
       restart_policy:
