@@ -25,7 +25,7 @@ services:
     - "8000:8000"
     volumes:
     - django_static:/code/staticfiles
-    - ./gunicorn/gunicorn.conf.py:/code/gunicorn/gunicorn.conf.py
+    - ./todo/gunicorn/gunicorn.conf.py:/code/gunicorn/gunicorn.conf.py
     - cotainer_logs:/var/log/
 
     command: gunicorn todo.wsgi -c /code/gunicorn/gunicorn.conf.py
