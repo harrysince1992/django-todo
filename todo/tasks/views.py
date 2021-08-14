@@ -2,6 +2,11 @@ from django.shortcuts import render, redirect, reverse, render_to_response
 from django.http import HttpResponseRedirect,HttpResponse
 from .models import TaskForm, Task, UsernameForm, Username
 from django.template import RequestContext
+import logging
+
+#creating a logger for our file
+logger = logging.getLogger(__file__)
+
 
 # Create your views here.
 
@@ -42,6 +47,8 @@ def check_user_validity(request):
     try:
         return Username.objects.get(username__exact=request.COOKIES["username"])
     except Exception:
+        logger.error("user does not exist in database.")
+        logger.exception("this logs an exception. user doesn't exist in database.")
         return False
 
 def delete(request, id):
@@ -50,6 +57,7 @@ def delete(request, id):
         Task.objects.filter(id=id,username=Username.objects.get(username__exact=request.COOKIES["username"])).delete()
         return redirect(reverse('tasks'))
     else:
+        logger.error("user not allowed to access this resource")
         return HttpResponse("You are not allowed to access this resource")
 
 def complete(request, id):

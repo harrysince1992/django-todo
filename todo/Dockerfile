@@ -14,3 +14,8 @@ RUN python manage.py collectstatic --noinput
 
 RUN python manage.py migrate
 
+RUN mkdir -p /code/gunicorn/
+
+ENTRYPOINT ["gunicorn"]
+
+CMD ["todo.wsgi", "-c", "/code/gunicorn/gunicorn.conf.py"]
