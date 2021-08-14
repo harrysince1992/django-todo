@@ -25,7 +25,40 @@ services:
     - "8000:8000"
     volumes:
     - django_static:/code/staticfiles
-    command: gunicorn todo.wsgi --bind=0.0.0.0:8000
+    - ./gunicorn/gunicorn.conf.py:/code/gunicorn/gunicorn.conf.py
+    - cotainer_logs:/var/log/
+
+    command: gunicorn todo.wsgi -c /code/gunicorn/gunicorn.conf.py
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 5s
+        order: start-first
+  
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.14.0"
+    environment:
+    - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    - "discovery.type=single-node"
+    ports:
+    - "9200:9200"
+    volumes:
+    - elasticsearch_data:/usr/share/elasticsearch/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 5s
+        order: start-first
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:7.9.3"
+    ports:
+    - "5601:5601"
     deploy:
       replicas: 1
       restart_policy:
@@ -35,5 +68,25 @@ services:
         delay: 5s
         order: start-first
 
+  filebeat:
+    image: "docker.elastic.co/beats/filebeat:7.14.0"
+    user: root
+    volumes:
+    - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    - /var/lib/docker:/var/lib/docker:ro
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /var/lib/docker/volumes/cotainer_logs:/usr/share/volumelogs:ro
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 1
+        delay: 5s
+        order: start-first
+
+
 volumes:
   django_static:
+  elasticsearch_data:
+  cotainer_logs:
